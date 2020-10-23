@@ -8,6 +8,9 @@ namespace Api.Models
 {
     public class CompanyDbContext : DbContext
     {
+        public CompanyDbContext() : base("Company")
+        { }
+
         public DbSet<Login> Login { get; set; }
         public DbSet<Department> Department { get; set; }
         public DbSet<Employee> Employee { get; set; }
