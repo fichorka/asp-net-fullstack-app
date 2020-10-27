@@ -81,6 +81,8 @@ namespace App.Controllers
             employee.DepartmentNo = newEmployee.DepartmentNo;
             employee.LastModifyDate = DateTime.Now;
 
+            await _context.SaveChangesAsync();
+
             return NoContent();
         }
 

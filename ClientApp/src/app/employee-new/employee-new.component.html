@@ -1,0 +1,49 @@
+<h1 id="tableLabel">New employee</h1>
+
+<form (ngSubmit)="onSubmit()">
+  <div class="form-group">
+    <label for="employee-name">Employee name</label>
+    <input
+      id="employee-name"
+      name="employee-name"
+      type="text"
+      class="form-control"
+      placeholder="Employee name"
+      [(ngModel)]="employeeName"
+    />
+  </div>
+  <div class="form-group">
+    <label for="department-location">Salary</label>
+    <input
+      id="salary"
+      name="salary"
+      type="number"
+      class="form-control"
+      placeholder="Salary"
+      [(ngModel)]="salary"
+    />
+  </div>
+  <div class="form-group">
+    <label for="department-location">departmentNo</label>
+    <select
+      id="departmentNo"
+      name="departmentNo"
+      class="form-control"
+      [(ngModel)]="departmentNo"
+    >
+      <option></option>
+      <option
+        *ngFor="let department of departments"
+        value="{{ department.departmentNo }}"
+      >
+        {{ department.departmentNo }}
+      </option>
+    </select>
+  </div>
+  <button type="submit" class="btn btn-primary mr-1">Submit</button>
+  <button type="reset" class="btn btn-secondary">Reset</button>
+</form>
+
+<button class="btn btn-outline-secondary mt-3" (click)="goBack()">
+  &lt; back
+</button>

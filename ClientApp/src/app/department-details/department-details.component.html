@@ -1,0 +1,55 @@
+<h1 id="tableLabel">Department Details</h1>
+
+<p *ngIf="!department"><em>Loading...</em></p>
+
+<div *ngIf="department">
+  <dl class="row">
+    <dt class="col-sm-3">Department no</dt>
+    <dd class="col-sm-9">{{ department.departmentNo }}</dd>
+
+    <dt class="col-sm-3">Department name</dt>
+    <dd class="col-sm-9">
+      {{ department.departmentName }}
+    </dd>
+
+    <dt class="col-sm-3">Department location</dt>
+    <dd class="col-sm-9">{{ department.departmentLocation }}</dd>
+  </dl>
+
+  <button type="reset" class="btn btn-danger my-3" (click)="onRemove()">
+    Remove
+  </button>
+
+  <form (ngSubmit)="onSubmit()">
+    <div class="form-group">
+      <label for="department-name">Department name</label>
+      <input
+        id="department-name"
+        name="department-name"
+        type="text"
+        class="form-control"
+        placeholder="Department name"
+        [(ngModel)]="newDepartmentName"
+        value="{{ newDepartmentName }}"
+      />
+    </div>
+    <div class="form-group">
+      <label for="department-location">Department location</label>
+      <input
+        id="department-location"
+        name="department-location"
+        type="text"
+        class="form-control"
+        placeholder="Department location"
+        [(ngModel)]="newDepartmentLocation"
+        value="{{ newDepartmentLocation }}"
+      />
+    </div>
+    <button type="submit" class="btn btn-primary mr-1">Submit</button>
+    <button type="reset" class="btn btn-secondary">Reset</button>
+  </form>
+</div>
+
+<button class="btn btn-outline-secondary mt-3" (click)="goBack()">
+  &lt; back
+</button>

@@ -1,0 +1,38 @@
+<h1 id="tableLabel">Employees</h1>
+
+<a routerLink="/employees/new" class="btn btn-primary my-3">New employee</a>
+
+<p *ngIf="!employees"><em>Loading...</em></p>
+
+<table
+  class="table table-striped"
+  aria-labelledby="tableLabel"
+  *ngIf="employees"
+>
+  <thead>
+    <tr>
+      <th>Employee name</th>
+      <th>Salary</th>
+      <th>Department no</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let employee of employees">
+      <td>
+        <a routerLink="/employees/{{ employee.employeeNo }}">{{
+          employee.employeeName
+        }}</a>
+      </td>
+      <td>
+        <a routerLink="/employees/{{ employee.employeeNo }}">{{
+          employee.salary
+        }}</a>
+      </td>
+      <td>
+        <a routerLink="/employees/{{ employee.employeeNo }}">{{
+          employee.departmentNo
+        }}</a>
+      </td>
+    </tr>
+  </tbody>
+</table>

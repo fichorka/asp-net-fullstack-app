@@ -1,0 +1,72 @@
+<h1 id="tableLabel">Department Details</h1>
+
+<p *ngIf="!employee"><em>Loading...</em></p>
+
+<div *ngIf="employee">
+  <dl class="row">
+    <dt class="col-sm-3">Employee name</dt>
+    <dd class="col-sm-9">{{ employee.employeeName }}</dd>
+
+    <dt class="col-sm-3">Salary</dt>
+    <dd class="col-sm-9">
+      {{ employee.salary }}
+    </dd>
+
+    <dt class="col-sm-3">Department No</dt>
+    <dd class="col-sm-9">{{ employee.departmentNo }}</dd>
+  </dl>
+
+  <button type="reset" class="btn btn-danger my-3" (click)="onRemove()">
+    Remove
+  </button>
+
+  <form (ngSubmit)="onSubmit()">
+    <div class="form-group">
+      <label for="department-name">Employee name</label>
+      <input
+        id="employee-name"
+        name="employee-name"
+        type="text"
+        class="form-control"
+        placeholder="employee name"
+        [(ngModel)]="newEmployeeName"
+        value="{{ newEmployeeName }}"
+      />
+    </div>
+    <div class="form-group">
+      <label for="department-location">Salary</label>
+      <input
+        id="salary"
+        name="salary"
+        type="number"
+        class="form-control"
+        placeholder="Salary"
+        [(ngModel)]="newSalary"
+        value="{{ newSalary }}"
+      />
+    </div>
+    <div class="form-group">
+      <label for="department-location">departmentNo</label>
+      <select
+        id="departmentNo"
+        name="departmentNo"
+        class="form-control"
+        [(ngModel)]="newDepartmentNo"
+      >
+        <option></option>
+        <option
+          *ngFor="let department of departments"
+          value="{{ department.departmentNo }}"
+        >
+          {{ department.departmentNo }}
+        </option>
+      </select>
+    </div>
+    <button type="submit" class="btn btn-primary mr-1">Submit</button>
+    <button type="reset" class="btn btn-secondary">Reset</button>
+  </form>
+</div>
+
+<button class="btn btn-outline-secondary mt-3" (click)="goBack()">
+  &lt; back
+</button>

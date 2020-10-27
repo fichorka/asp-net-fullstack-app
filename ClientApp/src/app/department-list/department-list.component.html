@@ -1,0 +1,32 @@
+<h1 id="tableLabel">Departments</h1>
+
+<a routerLink="/departments/new" class="btn btn-primary my-3">New department</a>
+
+<p *ngIf="!departments"><em>Loading...</em></p>
+
+<table
+  class="table table-striped"
+  aria-labelledby="tableLabel"
+  *ngIf="departments"
+>
+  <thead>
+    <tr>
+      <th>Department name</th>
+      <th>Department location</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let department of departments">
+      <td>
+        <a routerLink="/departments/{{ department.departmentNo }}">{{
+          department.departmentName
+        }}</a>
+      </td>
+      <td>
+        <a routerLink="/departments/{{ department.departmentNo }}">{{
+          department.departmentLocation
+        }}</a>
+      </td>
+    </tr>
+  </tbody>
+</table>
