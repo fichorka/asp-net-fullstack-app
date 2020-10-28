@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using App.Data;
 using App.Models;
-using Microsoft.AspNetCore.Http;
+using App.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace App.Controllers
 {
@@ -14,106 +10,73 @@ namespace App.Controllers
     [ApiController]
     public class EmployeesController : ControllerBase
     {
-        private CompanyContext _context;
-        public EmployeesController(CompanyContext context)
+        private EmployeesService _service;
+        public EmployeesController(EmployeesService service)
         {
-            _context = context;
+            _service = service;
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<EmployeeDTO>>> GetEmployees()
+        public async Task<ActionResult<IList<EmployeeDTO>>> GetEmployees()
         {
-            return await _context.Employee.Select(emp => EmployeeToDTO(emp)).ToListAsync();
+            return Ok(await _service.FindAllEmployees());
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<EmployeeDTO>> GetEmployee(int id)
         {
-            var employee = await _context.Employee.FindAsync(id);
-
+            EmployeeDTO employee = await _service.FindEmployee(id);
+            
             if (employee == null)
             {
                 return NotFound();
             }
 
-            return EmployeeToDTO(employee);
+            return employee;
         }
 
         [HttpPost]
         public async Task<ActionResult<EmployeeDTO>> PostEmployee(Employee employee)
         {
-            if (employee.DepartmentNo.HasValue && !DepartmentExists(employee.DepartmentNo)) {
-                return BadRequest();
+            EmployeeDTO postedEmployee = await _service.AddEmployee(employee);
+
+            if (postedEmployee == null)
+            {
+                BadRequest();
             }
 
-            employee.LastModifyDate = DateTime.Now;
-
-            _context.Employee.Add(employee);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction(
-                nameof(GetEmployee),
-                new { id = employee.EmployeeNo });
+            return postedEmployee;
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateEmployee(int id, Employee newEmployee)
+        public async Task<ActionResult<EmployeeDTO>> PutEmployee(int id, Employee employee)
         {
-            if (id != newEmployee.EmployeeNo)
+            if (id != employee.EmployeeNo)
             {
                 return BadRequest();
             }
 
-            var employee = await _context.Employee.FindAsync(id);
+            EmployeeDTO updatedEmployee = await _service.UpdateEmployee(employee);
 
-            if (employee == null)
+            if (updatedEmployee == null)
             {
                 return NotFound();
             }
 
-            if (newEmployee.DepartmentNo.HasValue && !DepartmentExists(newEmployee.DepartmentNo))
-            {
-                return BadRequest();
-            }
-
-            employee.EmployeeName = newEmployee.EmployeeName;
-            employee.Salary = newEmployee.Salary;
-            employee.DepartmentNo = newEmployee.DepartmentNo;
-            employee.LastModifyDate = DateTime.Now;
-
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            return updatedEmployee;
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteEmployee(int id)
+        public async Task<ActionResult<EmployeeDTO>> DeleteEmployee(int id)
         {
-            var employee = await _context.Employee.FindAsync(id);
+            EmployeeDTO deletedEmployee = await _service.RemoveEmployee(id);
 
-            if(employee == null)
+            if (deletedEmployee == null)
             {
                 return NotFound();
             }
 
-            _context.Employee.Remove(employee);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            return deletedEmployee;
         }
-
-
-        private bool DepartmentExists(int? id) =>
-            _context.Department.Any(dep => id == dep.DepartmentNo);
-
-
-        private static  EmployeeDTO EmployeeToDTO(Employee employee) =>
-            new EmployeeDTO
-            {
-                EmployeeNo = employee.EmployeeNo,
-                EmployeeName = employee.EmployeeName,
-                Salary = employee.Salary,
-                DepartmentNo = employee.DepartmentNo
-            };
     }
 }

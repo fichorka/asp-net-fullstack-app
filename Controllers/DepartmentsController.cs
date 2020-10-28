@@ -1,10 +1,8 @@
 ﻿using App.Data;
 using App.Models;
+using App.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace App.Controllers
@@ -13,87 +11,77 @@ namespace App.Controllers
     [Route("api/[controller]")]
     public class DepartmentsController : ControllerBase
     {
-        private CompanyContext _context;
+        private DepartmentsService _service;
 
-        public DepartmentsController(CompanyContext context)
+        public DepartmentsController(DepartmentsService service)
         {
-            _context = context;
+            _service = service;
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<DepartmentDTO>>> GetDepartments()
+        public async Task<ActionResult<IList<DepartmentDTO>>> GetDepartments()
         {
-            var allDepartments = await _context.Department.Select(dep => DepartmentToDTO(dep)).ToListAsync();
-
-            return allDepartments;
+            return Ok(await _service.FindAllDepartments());
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<DepartmentDTO>> GetDepartment(int id)
         {
-            var department = await _context.Department.FindAsync(id);
+            DepartmentDTO department = await _service.FindDepartment(id);
 
             if (department == null)
             {
                 return NotFound();
             }
 
-            return DepartmentToDTO(department);
+            return department;
         }
 
         [HttpPost]
-        public async Task<ActionResult<Department>> CreateDepartment(Department departmentDTO)
+        public async Task<ActionResult<Department>> CreateDepartment(Department newDepartment)
         {
-            var department = new Department
-            {
-                DepartmentName = departmentDTO.DepartmentName,
-                DepartmentLocation = departmentDTO.DepartmentLocation
-            };
+            var createdDepartmentDTO = await _service.AddDepartment(newDepartment);
 
-            _context.Department.Add(department);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction(
-                nameof(GetDepartment),
-                new { id = department.DepartmentNo });
-        }
-
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateDepartment(int id, Department departmentDTO)
-        {
-            if (id != departmentDTO.DepartmentNo)
+            if (createdDepartmentDTO == null)
             {
                 return BadRequest();
             }
 
-            var department = await _context.Department.FindAsync(id);
-            if (department == null)
+            return CreatedAtAction(
+                nameof(GetDepartment),
+                new { id = createdDepartmentDTO.DepartmentNo },
+                createdDepartmentDTO
+                );
+        }
+
+        [HttpPut("{id}")]
+        public async Task<ActionResult<DepartmentDTO>> UpdateDepartment(int id, Department department)
+        {
+            if (id != department.DepartmentNo)
+            {
+                return BadRequest();
+            }
+
+            var updatedDepartment = await _service.UpdateDepartment(department);
+            if (updatedDepartment == null)
             {
                 return NotFound();
             }
 
-            department.DepartmentName = departmentDTO.DepartmentName;
-            department.DepartmentLocation = departmentDTO.DepartmentLocation;
-            
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            return updatedDepartment;
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteDepartment(int id)
+        public async Task<ActionResult<DepartmentDTO>> DeleteDepartment(int id)
         {
-            var department = await _context.Department.FindAsync(id);
+            var deletedDepartment = await _service.RemoveDepartment(id);
 
-            if (department == null)
+            if (deletedDepartment == null)
             {
                 return NotFound();
             }
 
-            _context.Department.Remove(department);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            return deletedDepartment;
         }
 
         private static DepartmentDTO DepartmentToDTO(Department department) =>

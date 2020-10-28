@@ -29,7 +29,7 @@ namespace App.Data
 
             var departments = new Department[]
             {
-                new Department() { DepartmentName = "Development", DepartmentLocation = "Location" },
+                new Department() { DepartmentName = "Development", DepartmentLocation = "London" },
                 new Department() { DepartmentName = "Development", DepartmentLocation = "Zurich" },
                 new Department() { DepartmentName = "Development", DepartmentLocation = "Osijek" },
                 new Department() { DepartmentName = "Sales", DepartmentLocation = "London" },

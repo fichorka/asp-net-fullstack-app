@@ -1,5 +1,6 @@
 
 using App.Data;
+using App.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -25,6 +26,10 @@ namespace App
         {
             services.AddDbContext<CompanyContext>(options =>
                options.UseSqlServer(Configuration.GetConnectionString("CompanyContext")));
+
+            services.AddTransient<DepartmentsService>();
+            services.AddTransient<EmployeesService>();
+            services.AddTransient<QueryService>();
 
             services.AddControllersWithViews();
             // In production, the Angular files will be served from this directory
