@@ -6,7 +6,17 @@ Features:
 
 - MS SQL database
 - Basic authentication and authorization with jwt tokens
+- CRUD operations
+- UI
 
 ## Usage:
 
-Build the app in Visual Studio and run it.
+1. Build solution in Visual Studio <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>B</kbd>
+2. Start the app <kbd>Ctrl</kbd> + <kbd>F5</kbd>
+
+Database is initialized with sample data including following login info:
+
+| Username | Password   |
+| -------- | ---------- |
+| Bill     | ItsNotSoft |
+| Jean     | trollsRule |
