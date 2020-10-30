@@ -1,13 +1,33 @@
 <h1 id="tableLabel">Employees</h1>
 
-<a routerLink="/employees/new" class="btn btn-primary my-3">New employee</a>
+<a
+  *ngIf="globalStateService.jwtToken.length"
+  routerLink="/employees/new"
+  class="btn btn-primary my-3"
+  >New employee</a
+>
 
-<p *ngIf="!employees"><em>Loading...</em></p>
+<button
+  *ngIf="globalStateService.jwtToken.length"
+  class="btn btn-secondary ml-1 my-3"
+  (click)="toggleDataFormat()"
+>
+  Switch format
+</button>
+
+<p *ngIf="!globalStateService.jwtToken.length">
+  <em>Login to see the list</em>
+</p>
+<p *ngIf="globalStateService.jwtToken.length && !employees">
+  <em>Loading...</em>
+</p>
+
+<pre *ngIf="employees && isTextFormat">{{ employeesText }}</pre>
 
 <table
   class="table table-striped"
   aria-labelledby="tableLabel"
-  *ngIf="employees"
+  *ngIf="employees && !isTextFormat"
 >
   <thead>
     <tr>

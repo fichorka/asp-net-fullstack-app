@@ -5,51 +5,51 @@ import { Location } from "@angular/common";
 import { GlobalStateService } from "../globalState.service";
 
 @Component({
-  selector: "department-new",
-  templateUrl: "./department-new.component.html",
+  selector: "login",
+  templateUrl: "./login.component.html",
 })
-export class DepartmentNewComponent {
-  public department: Department;
-  public baseUrl: string;
-  public http: HttpClient;
-  private error: boolean = false;
-
-  public departmentName: string;
-  public departmentLocation: string;
+export class LoginComponent {
+  public username: string;
+  public password: string;
+  public error: boolean = false;
 
   constructor(
-    private location: Location,
-    http: HttpClient,
-    @Inject("BASE_URL") baseUrl: string,
     private globalStateService: GlobalStateService,
-    private router: Router
-  ) {
-    this.baseUrl = baseUrl;
-    this.http = http;
-  }
+    private router: Router,
+    private http: HttpClient,
+    @Inject("BASE_URL") private baseUrl: string
+  ) {}
 
   goBack(): void {
     this.router.navigate(["/departments"]);
   }
 
+  onChange() {
+    this.error = false;
+  }
+
   onSubmit(): void {
     this.http
       .post(
-        this.baseUrl + `api/departments`,
+        this.baseUrl + `api/login`,
         {
-          departmentName: this.departmentName,
-          departmentLocation: this.departmentLocation,
+          loginUserName: this.username,
+          loginPassword: this.password,
         },
         {
           headers: {
             "Content-Type": "application/json",
-            Authorization: this.globalStateService.jwtToken,
           },
         }
       )
       .subscribe(
-        () => {
-          this.goBack();
+        (result: { token?: string }) => {
+          if (result && result.token) {
+            this.globalStateService.jwtToken = result.token;
+            this.router.navigate(["/"]);
+          } else {
+            this.error = true;
+          }
         },
         (error) => {
           this.error = true;

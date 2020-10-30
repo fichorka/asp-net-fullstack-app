@@ -1,6 +1,8 @@
 <h1 id="tableLabel">Department Details</h1>
 
-<p *ngIf="!department"><em>Loading...</em></p>
+<p *ngIf="globalStateService.jwtToken.length && !department">
+  <em>Loading...</em>
+</p>
 
 <div *ngIf="department">
   <dl class="row">
@@ -31,6 +33,9 @@
         placeholder="Department name"
         [(ngModel)]="newDepartmentName"
         value="{{ newDepartmentName }}"
+        [class.border-danger]="error"
+        (input)="error = false"
+        required
       />
     </div>
     <div class="form-group">
@@ -43,6 +48,9 @@
         placeholder="Department location"
         [(ngModel)]="newDepartmentLocation"
         value="{{ newDepartmentLocation }}"
+        [class.border-danger]="error"
+        (input)="error = false"
+        required
       />
     </div>
     <button type="submit" class="btn btn-primary mr-1">Submit</button>

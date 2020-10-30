@@ -1,6 +1,6 @@
 <h1 id="tableLabel">New department</h1>
 
-<form (ngSubmit)="onSubmit()">
+<form (ngSubmit)="onSubmit()" ngNativeValidate>
   <div class="form-group">
     <label for="department-name">Department name</label>
     <input
@@ -10,6 +10,9 @@
       class="form-control"
       placeholder="Department name"
       [(ngModel)]="departmentName"
+      [class.border-danger]="error"
+      (input)="error = false"
+      required
     />
   </div>
   <div class="form-group">
@@ -21,6 +24,9 @@
       class="form-control"
       placeholder="Department location"
       [(ngModel)]="departmentLocation"
+      [class.border-danger]="error"
+      (input)="error = false"
+      required
     />
   </div>
   <button type="submit" class="btn btn-primary mr-1">Submit</button>

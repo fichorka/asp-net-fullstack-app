@@ -1,6 +1,8 @@
-<h1 id="tableLabel">Department Details</h1>
+<h1 id="tableLabel">Employee Details</h1>
 
-<p *ngIf="!employee"><em>Loading...</em></p>
+<p *ngIf="globalStateService.jwtToken.length && !employee">
+  <em>Loading...</em>
+</p>
 
 <div *ngIf="employee">
   <dl class="row">
@@ -22,7 +24,7 @@
 
   <form (ngSubmit)="onSubmit()">
     <div class="form-group">
-      <label for="department-name">Employee name</label>
+      <label for="employee-name">Employee name</label>
       <input
         id="employee-name"
         name="employee-name"
@@ -31,10 +33,13 @@
         placeholder="employee name"
         [(ngModel)]="newEmployeeName"
         value="{{ newEmployeeName }}"
+        [class.border-danger]="error"
+        (input)="error = false"
+        required
       />
     </div>
     <div class="form-group">
-      <label for="department-location">Salary</label>
+      <label for="salary">Salary</label>
       <input
         id="salary"
         name="salary"
@@ -43,15 +48,20 @@
         placeholder="Salary"
         [(ngModel)]="newSalary"
         value="{{ newSalary }}"
+        [class.border-danger]="error"
+        (input)="error = false"
+        required
       />
     </div>
     <div class="form-group">
-      <label for="department-location">departmentNo</label>
+      <label for="departmentNo">departmentNo</label>
       <select
         id="departmentNo"
         name="departmentNo"
         class="form-control"
         [(ngModel)]="newDepartmentNo"
+        [class.border-danger]="error"
+        (input)="error = false"
       >
         <option></option>
         <option

@@ -1,8 +1,18 @@
 <h1 id="tableLabel">Departments</h1>
 
-<a routerLink="/departments/new" class="btn btn-primary my-3">New department</a>
+<a
+  *ngIf="globalStateService.jwtToken.length"
+  routerLink="/departments/new"
+  class="btn btn-primary my-3"
+  >New department</a
+>
 
-<p *ngIf="!departments"><em>Loading...</em></p>
+<p *ngIf="!globalStateService.jwtToken.length">
+  <em>Login to see the list</em>
+</p>
+<p *ngIf="globalStateService.jwtToken.length && !departments">
+  <em>Loading...</em>
+</p>
 
 <table
   class="table table-striped"

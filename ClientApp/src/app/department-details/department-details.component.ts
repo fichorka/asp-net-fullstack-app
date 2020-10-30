@@ -1,7 +1,8 @@
 import { Component, Inject, OnInit } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
-import { ActivatedRoute } from "@angular/router";
+import { ActivatedRoute, Router } from "@angular/router";
 import { Location } from "@angular/common";
+import { GlobalStateService } from "../globalState.service";
 
 @Component({
   selector: "department-details",
@@ -12,15 +13,17 @@ export class DepartmentDetailsComponent implements OnInit {
   public baseUrl: string;
   public id: number;
   public http: HttpClient;
+  private error: boolean = false;
 
   public newDepartmentName: string;
   public newDepartmentLocation: string;
 
   constructor(
     private route: ActivatedRoute,
-    private location: Location,
     http: HttpClient,
-    @Inject("BASE_URL") baseUrl: string
+    @Inject("BASE_URL") baseUrl: string,
+    private globalStateService: GlobalStateService,
+    private router: Router
   ) {
     this.baseUrl = baseUrl;
     this.http = http;
@@ -29,19 +32,25 @@ export class DepartmentDetailsComponent implements OnInit {
   ngOnInit(): void {
     this.id = +this.route.snapshot.paramMap.get("id");
     this.http
-      .get<Department>(this.baseUrl + `api/departments/${this.id}`)
+      .get<Department>(this.baseUrl + `api/departments/${this.id}`, {
+        headers: {
+          Authorization: this.globalStateService.jwtToken,
+        },
+      })
       .subscribe(
         (result) => {
           this.department = result;
           this.newDepartmentName = result.departmentName;
           this.newDepartmentLocation = result.departmentLocation;
         },
-        (error) => console.error(error)
+        (error) => {
+          console.error(error);
+        }
       );
   }
 
   goBack(): void {
-    this.location.back();
+    this.router.navigate(["/departments"]);
   }
 
   onSubmit(): void {
@@ -53,18 +62,32 @@ export class DepartmentDetailsComponent implements OnInit {
           departmentName: this.newDepartmentName,
           departmentLocation: this.newDepartmentLocation,
         },
-        { headers: { "Content-Type": "application/json" } }
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: this.globalStateService.jwtToken,
+          },
+        }
       )
-      .subscribe(() => {
-        this.goBack();
-      });
+      .subscribe(
+        () => {
+          this.goBack();
+        },
+        (error) => {
+          this.error = true;
+        }
+      );
   }
 
   onRemove(): void {
     this.http
-      .delete(this.baseUrl + `api/departments/${this.id}`)
+      .delete(this.baseUrl + `api/departments/${this.id}`, {
+        headers: {
+          Authorization: this.globalStateService.jwtToken,
+        },
+      })
       .subscribe(() => {
-        this.goBack();
+        this.router.navigate(["/departments"]);
       });
   }
 }

@@ -13,6 +13,7 @@ import { DepartmentNewComponent } from "./department-new/department-new.componen
 import { EmployeeListComponent } from "./employee-list/employee-list.component";
 import { EmployeeNewComponent } from "./employee-new/employee-new.component";
 import { EmployeeDetailsComponent } from "./employee-details/employee-details.component";
+import { LoginComponent } from "./login/login.component";
 
 @NgModule({
   declarations: [
@@ -25,6 +26,7 @@ import { EmployeeDetailsComponent } from "./employee-details/employee-details.co
     EmployeeListComponent,
     EmployeeNewComponent,
     EmployeeDetailsComponent,
+    LoginComponent,
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: "ng-cli-universal" }),
@@ -38,6 +40,7 @@ import { EmployeeDetailsComponent } from "./employee-details/employee-details.co
       { path: "employees", component: EmployeeListComponent },
       { path: "employees/new", component: EmployeeNewComponent },
       { path: "employees/:id", component: EmployeeDetailsComponent },
+      { path: "login", component: LoginComponent },
     ]),
   ],
   providers: [],

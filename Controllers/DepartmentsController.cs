@@ -1,7 +1,7 @@
-﻿using App.Data;
-using App.Models;
+﻿using App.Models;
 using App.Services;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -12,21 +12,33 @@ namespace App.Controllers
     public class DepartmentsController : ControllerBase
     {
         private DepartmentsService _service;
+        private JwtService _jwtService;
 
-        public DepartmentsController(DepartmentsService service)
+        public DepartmentsController(DepartmentsService service, JwtService jwtService)
         {
             _service = service;
+            _jwtService = jwtService;
         }
 
         [HttpGet]
-        public async Task<ActionResult<IList<DepartmentDTO>>> GetDepartments()
+        public async Task<ActionResult<IList<DepartmentDTO>>> GetDepartments([FromHeader] string Authorization)
         {
+            if (string.IsNullOrEmpty(Authorization) || !_jwtService.IsTokenValid(Authorization))
+            {
+                return Unauthorized();
+            }
+
             return Ok(await _service.FindAllDepartments());
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<DepartmentDTO>> GetDepartment(int id)
+        public async Task<ActionResult<DepartmentDTO>> GetDepartment(int id, [FromHeader] string Authorization)
         {
+            if (string.IsNullOrEmpty(Authorization) || !_jwtService.IsTokenValid(Authorization))
+            {
+                return Unauthorized();
+            }
+
             DepartmentDTO department = await _service.FindDepartment(id);
 
             if (department == null)
@@ -38,8 +50,13 @@ namespace App.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Department>> CreateDepartment(Department newDepartment)
+        public async Task<ActionResult<Department>> CreateDepartment(Department newDepartment, [FromHeader] string Authorization)
         {
+            if (string.IsNullOrEmpty(Authorization) || !_jwtService.IsTokenValid(Authorization))
+            {
+                return Unauthorized();
+            }
+
             var createdDepartmentDTO = await _service.AddDepartment(newDepartment);
 
             if (createdDepartmentDTO == null)
@@ -55,8 +72,13 @@ namespace App.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<DepartmentDTO>> UpdateDepartment(int id, Department department)
+        public async Task<ActionResult<DepartmentDTO>> UpdateDepartment(int id, Department department, [FromHeader] string Authorization)
         {
+            if (string.IsNullOrEmpty(Authorization) || !_jwtService.IsTokenValid(Authorization))
+            {
+                return Unauthorized();
+            }
+
             if (id != department.DepartmentNo)
             {
                 return BadRequest();
@@ -72,8 +94,13 @@ namespace App.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult<DepartmentDTO>> DeleteDepartment(int id)
+        public async Task<ActionResult<DepartmentDTO>> DeleteDepartment(int id, [FromHeader] string Authorization)
         {
+            if (string.IsNullOrEmpty(Authorization) || !_jwtService.IsTokenValid(Authorization))
+            {
+                return Unauthorized();
+            }
+
             var deletedDepartment = await _service.RemoveDepartment(id);
 
             if (deletedDepartment == null)

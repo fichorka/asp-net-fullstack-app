@@ -1,7 +1,8 @@
 import { Component, Inject, OnInit } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
-import { ActivatedRoute } from "@angular/router";
+import { ActivatedRoute, Router } from "@angular/router";
 import { Location } from "@angular/common";
+import { GlobalStateService } from "../globalState.service";
 
 @Component({
   selector: "employee-details",
@@ -13,6 +14,7 @@ export class EmployeeDetailsComponent implements OnInit {
   public baseUrl: string;
   public id: number;
   public http: HttpClient;
+  private error: boolean = false;
 
   public newEmployeeName: string;
   public newSalary: number;
@@ -22,7 +24,9 @@ export class EmployeeDetailsComponent implements OnInit {
     private route: ActivatedRoute,
     private location: Location,
     http: HttpClient,
-    @Inject("BASE_URL") baseUrl: string
+    @Inject("BASE_URL") baseUrl: string,
+    private globalStateService: GlobalStateService,
+    private router: Router
   ) {
     this.baseUrl = baseUrl;
     this.http = http;
@@ -30,15 +34,25 @@ export class EmployeeDetailsComponent implements OnInit {
 
   ngOnInit(): void {
     this.id = +this.route.snapshot.paramMap.get("id");
-    this.http.get<Department[]>(this.baseUrl + `api/departments`).subscribe(
-      (result) => {
-        this.departments = result;
-      },
-      (error) => console.error(error)
-    );
+    this.http
+      .get<Department[]>(this.baseUrl + `api/departments`, {
+        headers: {
+          Authorization: this.globalStateService.jwtToken,
+        },
+      })
+      .subscribe(
+        (result) => {
+          this.departments = result;
+        },
+        (error) => console.error(error)
+      );
 
     this.http
-      .get<Employee>(this.baseUrl + `api/employees/${this.id}`)
+      .get<Employee>(this.baseUrl + `api/employees/${this.id}`, {
+        headers: {
+          Authorization: this.globalStateService.jwtToken,
+        },
+      })
       .subscribe(
         (result) => {
           this.employee = result;
@@ -51,7 +65,7 @@ export class EmployeeDetailsComponent implements OnInit {
   }
 
   goBack(): void {
-    this.location.back();
+    this.router.navigate(["/employees"]);
   }
 
   onSubmit(): void {
@@ -64,16 +78,30 @@ export class EmployeeDetailsComponent implements OnInit {
           salary: +this.newSalary,
           departmentNo: +this.newDepartmentNo,
         },
-        { headers: { "Content-Type": "application/json" } }
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: this.globalStateService.jwtToken,
+          },
+        }
       )
-      .subscribe(() => {
-        this.goBack();
-      });
+      .subscribe(
+        () => {
+          this.goBack();
+        },
+        (error) => {
+          this.error = error;
+        }
+      );
   }
 
   onRemove(): void {
     this.http
-      .delete(this.baseUrl + `api/employees/${this.id}`)
+      .delete(this.baseUrl + `api/employees/${this.id}`, {
+        headers: {
+          Authorization: this.globalStateService.jwtToken,
+        },
+      })
       .subscribe(() => {
         this.goBack();
       });

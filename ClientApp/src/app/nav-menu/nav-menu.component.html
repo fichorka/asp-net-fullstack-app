@@ -1,8 +1,13 @@
 <header>
   <nav
-    class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3"
+    class="navbar navbar-expand-sm navbar-toggleable-sm border-bottom box-shadow mb-3"
+    [ngClass]="
+      globalStateService.jwtToken.length
+        ? 'navbar-dark bg-primary'
+        : 'navbar-light'
+    "
   >
-    <div class="container">
+    <div class="container text-reset">
       <a class="navbar-brand" [routerLink]="['/']">App</a>
       <button
         class="navbar-toggler"
@@ -16,26 +21,42 @@
         <span class="navbar-toggler-icon"></span>
       </button>
       <div
-        class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse"
+        class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse text-reset"
         [ngClass]="{ show: isExpanded }"
       >
-        <ul class="navbar-nav flex-grow">
-          <li
-            class="nav-item"
-            [routerLinkActive]="['link-active']"
-            [routerLinkActiveOptions]="{ exact: true }"
-          >
-            <a class="nav-link text-dark pl-4" [routerLink]="['/']">Home</a>
-          </li>
-          <li class="nav-item" [routerLinkActive]="['link-active']">
-            <a class="nav-link text-dark pl-4" [routerLink]="['/departments']"
+        <ul class="navbar-nav text-reset flex-grow">
+          <li class="nav-item" [routerLinkActive]="['active']">
+            <a class="nav-link navbar-text pl-4" [routerLink]="['/departments']"
               >Departments</a
             >
           </li>
-          <li class="nav-item" [routerLinkActive]="['link-active']">
-            <a class="nav-link text-dark pl-4" [routerLink]="['/employees']"
+          <li class="nav-item" [routerLinkActive]="['active']">
+            <a class="nav-link navbar-text pl-4" [routerLink]="['/employees']"
               >Employees</a
             >
+          </li>
+          <li
+            *ngIf="!globalStateService.jwtToken.length"
+            class="nav-item"
+            [routerLinkActive]="['active']"
+          >
+            <a class="nav-link navbar-text pl-4" [routerLink]="['/login']"
+              >Login</a
+            >
+          </li>
+
+          <li
+            *ngIf="globalStateService.jwtToken.length"
+            class="nav-item"
+            [routerLinkActive]="['active']"
+          >
+            <a
+              (click)="logout()"
+              class="nav-link text-warning pl-4"
+              [routerLink]="['/']"
+            >
+              Logout
+            </a>
           </li>
         </ul>
       </div>

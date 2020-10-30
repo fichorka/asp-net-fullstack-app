@@ -22,8 +22,9 @@ namespace App.Services
 
             var departments = await _context.Department.ToListAsync();
 
-            var avgSalary = departments.Where(d => d.DepartmentName == "Development" && d.DepartmentLocation != "London")
-                .Join(employees, d => d.DepartmentNo, e => e.DepartmentNo, (d, e) => e.Salary).Average();
+            var selectedDepartments = departments.Where(d => d.DepartmentName == "Development" && d.DepartmentLocation != "London");
+
+            var avgSalary = selectedDepartments.Any() ? selectedDepartments.Join(employees, d => d.DepartmentNo, e => e.DepartmentNo, (d, e) => e.Salary).Average() : 0.0;
 
             return avgSalary;
         }
@@ -63,9 +64,9 @@ namespace App.Services
         {
             var employees = await _context.Employee.ToListAsync();
 
-            var result = employees.OrderByDescending(emp => emp.Salary).ToList()[1].Salary;
+            var selectedEmployee = employees.OrderByDescending(emp => emp.Salary).ToList();
 
-            return result;
+            return selectedEmployee.Count > 1 ? selectedEmployee[1].Salary : 0;
         }
     }
 

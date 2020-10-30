@@ -27,6 +27,8 @@ namespace App
             services.AddDbContext<CompanyContext>(options =>
                options.UseSqlServer(Configuration.GetConnectionString("CompanyContext")));
 
+            services.AddTransient<JwtService>();
+            services.AddTransient<AppAuthentication>();
             services.AddTransient<DepartmentsService>();
             services.AddTransient<EmployeesService>();
             services.AddTransient<QueryService>();
